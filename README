@@ -1,0 +1,15 @@
+# gotmilk
+
+A little tool for working with Github via the command-line. Sometimes quicker than doing things through the Github web UI. It's written in Clojure.
+
+## Usage
+
+FIXME: write
+
+## Installation
+
+FIXME: write
+
+## License
+
+This work is Licensed under the EPL, the same thing that Clojure itself is licensed under. You can find a copy of the EPL in the root of this directory.
