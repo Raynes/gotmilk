@@ -1,5 +1,13 @@
 (ns gotmilk.core
-  (:use [clj-github core issues repos users gists]))
+  (:use [clj-github core issues repos users gists]
+        [clojure.contrib.shell :only [sh]]))
+
+(defn get-config [parameter]
+  (apply str (butlast (sh "git" "config" "--global" (str "github." parameter)))))
+
+
+(def auth-map {:user (get-config "user")
+               :pass (get-config "password")})
 
 (defn format-result [result]
   (cond
@@ -18,6 +26,6 @@
   (-> user show-user-info format-result))
 
 (defn do-shit [[action & args]]
-  (println "\n" (apply execute action args)))
+  (println (str "\n" (apply execute action args))))
 
-(do-shit *command-line-args*)
+(with-auth auth-map (do-shit *command-line-args*))
