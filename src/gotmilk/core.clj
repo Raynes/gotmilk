@@ -1,6 +1,6 @@
 (ns gotmilk.core
-  (:use [clj-github core issues repos users gists]
-        [clojure.contrib.shell :only [sh]]))
+  (:use [clojure.contrib.shell :only [sh]]
+        [clj-github.core :only [with-auth]]))
 
 (defn get-config [parameter]
   (apply str (butlast (sh "git" "config" "--global" (str "github." parameter)))))
@@ -17,7 +17,7 @@
                   (for [[k v] result]
                     (str (->> k str rest (apply str) (#(.replaceAll % "_" " "))) " -> " v "\n")))
    (string? result) result
-   (vector result) (apply str (for [x result] (str x ", ")))
+   (vector? result) (str (apply str (interpose ", " result)) "\n")
    :else "I'm stupid."))
 
 (defmulti execute (comp identity first vector))
@@ -27,11 +27,7 @@
      (swap! commands assoc ~trigger ~help)
      (defmethod execute ~trigger [worthless# & ~args] ~@body)))
 
-(defcommand "user-info"
-  "Get a ton of information about a user."
-  [user] (-> user show-user-info format-result))
-
 (defn do-shit [[action & args]]
   (println (str "\n" (apply execute action args))))
 
-(with-auth auth-map (do-shit *command-line-args*))
+(defn run [] (with-auth auth-map (do-shit *command-line-args*)))
