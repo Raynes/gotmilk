@@ -5,6 +5,7 @@
 (defn get-config [parameter]
   (apply str (butlast (sh "git" "config" "--global" (str "github." parameter)))))
 
+(def commands (atom {}))
 
 (def auth-map {:user (get-config "user")
                :pass (get-config "password")})
@@ -21,9 +22,14 @@
 
 (defmulti execute (comp identity first vector))
 
-(defmethod execute "user-info"
-  [_ & [user]]
-  (-> user show-user-info format-result))
+(defmacro defcommand [trigger help args & body]
+  `(do
+     (swap! commands assoc ~trigger ~help)
+     (defmethod execute ~trigger [worthless# & ~args] ~@body)))
+
+(defcommand "user-info"
+  "Get a ton of information about a user."
+  [user] (-> user show-user-info format-result))
 
 (defn do-shit [[action & args]]
   (println (str "\n" (apply execute action args))))
