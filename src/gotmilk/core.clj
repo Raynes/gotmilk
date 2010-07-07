@@ -10,6 +10,15 @@
 (def auth-map {:user (get-config "user")
                :pass (get-config "password")})
 
+(defn parse-options [options]
+  (let [pred #(or (.startsWith % "--") (.startsWith % "-"))]
+    [(into {}
+           (map #(if (.startsWith % "--")
+                   (let [[front back] (.split % "=")] [(apply str (drop 2 front)) back])
+                   [(apply str (drop 1 (take 2 %))) (apply str (drop 2 %))])
+                (filter pred options)))
+     (remove pred options)]))
+
 (defn format-result [result]
   (cond
    (map? result) (apply
