@@ -14,10 +14,22 @@
   (let [pred #(or (.startsWith % "--") (.startsWith % "-"))]
     [(into {}
            (map #(if (.startsWith % "--")
-                   (let [[front back] (.split % "=")] [(apply str (drop 2 front)) back])
-                   [(apply str (drop 1 (take 2 %))) (apply str (drop 2 %))])
+                   (let [[front back] (.split % "=")]
+                     [(keyword (apply str (drop 2 front))) back])
+                   [(keyword (apply str (drop 1 (take 2 %))))
+                    (apply str (drop 2 %))])
                 (filter pred options)))
      (remove pred options)]))
+
+(defn any-option?
+  "Tests whether or not an option was provided."
+  [options opt]
+  ((into #{} (keys options)) opt))
+
+(defn option?
+  "Tests whether or not any of the provided options were provided."
+  [option-map & options]
+  (some identity (map (partial any-option? option-map) options)))
 
 (defn format-result [result]
   (cond
@@ -34,9 +46,10 @@
 (defmacro defcommand [trigger help args & body]
   `(do
      (swap! commands assoc ~trigger ~help)
-     (defmethod execute ~trigger [worthless# & ~args] ~@body)))
+     (defmethod execute ~trigger [worthless# ~'options & ~args] ~@body)))
 
 (defn do-shit [[action & args]]
-  (println (str "\n" (apply execute action args))))
+  (let [[options argies] (parse-options args)]
+    (println (str "\n" (apply execute action options argies)))))
 
 (defn run [] (with-auth auth-map (do-shit *command-line-args*)))
