@@ -48,8 +48,8 @@
      (swap! commands assoc ~trigger ~help)
      (defmethod execute ~trigger [worthless# ~'options & ~args] ~@body)))
 
-(defn do-shit [[action & args]]
-  (let [[options argies] (parse-options args)]
-    (println (str "\n" (apply execute action options argies)))))
-
-(defn run [] (with-auth *auth-map* (do-shit *command-line-args*)))
+(defn run []
+  (with-auth *auth-map*
+    (let [[action & args] *command-line-args*
+          [options argies] (parse-options args)]
+      (println (str "\n" (apply execute action options argies))))))
