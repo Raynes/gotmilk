@@ -27,9 +27,9 @@
   "Search for users on github. First argument should be the maximum number of results
 to return"
   [n & query]
-  (->> query (interpose " ") (apply str) search-users
+  (->> query (join " ") search-users
        (take (Integer/parseInt n)) (map format-result)
-       (interpose "\n") (apply str)))
+       (join "\n")))
 
 (defcommand "watching"
   "Get a list of repos that a user is watching. First argument should be the maximum number
