@@ -19,6 +19,10 @@
   "Get a list of users that a user is following."
   [user] (-> user show-following format-result))
 
+(defcommand "unfollow"
+  "Unfollow a user."
+  [user] (-> user unfollow format-result))
+
 (defcommand "search-users"
   "Search for users on github. First argument should be the maximum number of results
 to return"
