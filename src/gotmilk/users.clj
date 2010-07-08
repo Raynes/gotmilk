@@ -40,3 +40,12 @@ of results to return. If you only want names, use --names."
                     #(join "\n" (map format-result %)))]
         (->> user show-watching (take (Integer/parseInt n)) formatter)))
 
+(defcommand "user-set"
+  "Set some of your user information. Arguments are key and value pairs. Possible keys are
+name, email, blog, company, and location.
+
+Example usage: gotmilk user-set email myreallylongemail@gmail.com"
+  [& args]
+  (-> (map #(apply user-set (:user *auth-map*) %)
+           (partition 2 args))
+      last format-result))
