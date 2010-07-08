@@ -7,8 +7,8 @@
 
 (def commands (atom {}))
 
-(def auth-map {:user (get-config "user")
-               :pass (get-config "password")})
+(def *auth-map* {:user (get-config "user")
+                 :pass (get-config "password")})
 
 (defn parse-options [options]
   (let [pred #(or (.startsWith % "--") (.startsWith % "-"))]
@@ -52,4 +52,4 @@
   (let [[options argies] (parse-options args)]
     (println (str "\n" (apply execute action options argies)))))
 
-(defn run [] (with-auth auth-map (do-shit *command-line-args*)))
+(defn run [] (with-auth *auth-map* (do-shit *command-line-args*)))
