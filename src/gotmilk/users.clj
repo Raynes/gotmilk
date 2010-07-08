@@ -1,7 +1,7 @@
 (ns gotmilk.users
   (:use gotmilk.core
         clj-github.users
-        clojure.contrib.command-line))
+        [clojure.contrib.string :only [join]]))
 
 (defcommand "user-info"
   "Get a ton of information about a user."
@@ -22,6 +22,17 @@
 (defcommand "search-users"
   "Search for users on github. First argument should be the maximum number of results
 to return"
-  [n & query] (->> query (interpose " ") (apply str) search-users
-                   (take (Integer/parseInt n)) (map format-result)
-                   (interpose "\n") (apply str))) 
+  [n & query]
+  (->> query (interpose " ") (apply str) search-users
+       (take (Integer/parseInt n)) (map format-result)
+       (interpose "\n") (apply str)))
+
+(defcommand "watching"
+  "Get a list of repos that a user is watching. First argument should be the maximum number
+of results to return. If you only want names, use --names."
+  [n & [user]]
+  (let [formatter (if (option? options :names :n)
+                    #(str (join ", " (map :name %)) "\n")
+                    #(join "\n" (map format-result %)))]
+        (->> user show-watching (take (Integer/parseInt n)) formatter)))
+
