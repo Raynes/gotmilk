@@ -31,13 +31,23 @@
   [option-map & options]
   (some identity (map (partial any-option? option-map) options)))
 
+(defmacro cond-options [options & clauses]
+  `(cond
+    ~@(apply concat
+             (for [[option happen] (partition 2 clauses)]
+               (if (= option :else)
+                 `(:else ~happen)
+                 `((option? ~options ~option) ~happen))))))
+
 (defn format-result [result]
-  (str
+  (str "\n"
    (cond
     (map? result) (apply
                    str
-                   (for [[k v] result]
-                     (str (->> k str rest (apply str) (#(.replaceAll % "_" " "))) " -> " v)))
+                   (interpose
+                    "\n"
+                    (for [[k v] result]
+                      (str (->> k str rest (apply str) (#(.replaceAll % "_" " "))) " -> " v))))
     (string? result) result
     (vector? result) (apply str (interpose ", " result)))
    "\n"))
@@ -53,4 +63,4 @@
   (with-auth *auth-map*
     (let [[action & args] *command-line-args*
           [options argies] (parse-options args)]
-      (println (str "\n" (apply execute action options argies))))))
+      (println (apply execute action options argies)))))
