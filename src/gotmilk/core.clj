@@ -32,14 +32,15 @@
   (some identity (map (partial any-option? option-map) options)))
 
 (defn format-result [result]
-  (cond
-   (map? result) (apply
-                  str
-                  (for [[k v] result]
-                    (str (->> k str rest (apply str) (#(.replaceAll % "_" " "))) " -> " v "\n")))
-   (string? result) result
-   (vector? result) (str (apply str (interpose ", " result)) "\n")
-   :else "I'm stupid."))
+  (str
+   (cond
+    (map? result) (apply
+                   str
+                   (for [[k v] result]
+                     (str (->> k str rest (apply str) (#(.replaceAll % "_" " "))) " -> " v)))
+    (string? result) result
+    (vector? result) (apply str (interpose ", " result)))
+   "\n"))
 
 (defmulti execute (comp identity first vector))
 
