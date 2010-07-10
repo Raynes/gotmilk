@@ -58,11 +58,13 @@
        "\n"))
 
 (defn generate-clone-urls [res-map]
-  (let [owner (:owner res-map)
-        name (:name res-map)]
-    (assoc res-map
-      "clone url (read only)" (str "git://github.com/" owner "/" name ".git")
-      "ssh clone url (if you have write access, use this)" (str "git@github.com:" owner "/" name ".git"))))
+  (if (map? res-map)
+    (let [owner (:owner res-map)
+          name (:name res-map)]
+      (assoc res-map
+        "clone url (read only)" (str "git://github.com/" owner "/" name ".git")
+        "ssh clone url (read write)" (str "git@github.com:" owner "/" name ".git")))
+    res-map))
 
 (defmulti execute (comp identity first vector))
 
