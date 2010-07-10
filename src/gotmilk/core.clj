@@ -47,12 +47,22 @@
                        (interpose
                         "\n"
                         (for [[k v] result]
-                          (str (->> k str rest (apply str) (#(.replaceAll % "_" " "))) " -> " v))))
+                          (let [strk (if (keyword? k)
+                                       (->> k str rest (apply str) (#(.replaceAll % "_" " ")))
+                                       k)]
+                            (str strk " -> " v)))))
         (string? result) result
         (nil? result) "wut"
         (not (seq result)) "Nothing interested happened."
         :else (apply str (interpose ", " result)))
        "\n"))
+
+(defn generate-clone-urls [res-map]
+  (let [owner (:owner res-map)
+        name (:name res-map)]
+    (assoc res-map
+      "clone url (read only)" (str "git://github.com/" owner "/" name ".git")
+      "ssh clone url (if you have write access, use this)" (str "git@github.com:" owner "/" name ".git"))))
 
 (defmulti execute (comp identity first vector))
 
