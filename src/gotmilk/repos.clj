@@ -6,7 +6,6 @@
 (defcommand "repo"
   "for creation (--create) : The first argument is required, and it should be the name of the repo.
 Optional following keys are as follows, in order: description, homepage, and whether or
-
 not the repo is public which should be true or false.
 
 for deletion (--delete): Just supply the name of the repo.
@@ -62,33 +61,33 @@ to limit the number of results.
 for showing a repo's tags (--show-tags): Supply the name of the user who owns the repo and the repo's name.
 
 Will default to --create"
-  [name & [desc home pub]]
+  [one two three four]
   (cond-options
    options
-   :delete (-> name delete-repo format-result)
-   :fork (-> (fork-repo name desc) format-result)
-   :add-collaborator (-> (add-collaborator desc name) format-result)
-   :remove-collaborator (-> (remove-collaborator desc name) format-result)
-   :add-deploy (-> (add-deploy-key name desc home))
-   :remove-deploy (-> (remove-deploy-key name desc))
-   :search (-> (apply search-repos name (apply concat (dissoc options :search)))
+   :delete (-> one delete-repo format-result)
+   :fork (-> (fork-repo one two) format-result)
+   :add-collaborator (-> (add-collaborator two one) format-result)
+   :remove-collaborator (-> (remove-collaborator two one) format-result)
+   :add-deploy (-> (add-deploy-key one two three))
+   :remove-deploy (-> (remove-deploy-key one two))
+   :search (-> (apply search-repos one (apply concat (dissoc options :search)))
                (take-and-format (:results options)))
-   :set-info (-> (set-repo-info name desc home pub) format-result)
-   :set-visibility (-> (set-repo-visibility name desc) format-result)
-   :watch (-> (watch-repo name desc) format-result)
-   :unwatch (-> (unwatch-repo name desc) format-result)
-   :show-collaborators (-> (show-collaborators name desc) format-result)
-   :show-contributors (-> (show-contributors name desc :include-anon? (option? options :anon))
+   :set-info (-> (set-repo-info one two three four) format-result)
+   :set-visibility (-> (set-repo-visibility one two) format-result)
+   :watch (-> (watch-repo one two) format-result)
+   :unwatch (-> (unwatch-repo one two) format-result)
+   :show-collaborators (-> (show-collaborators one two) format-result)
+   :show-contributors (-> (show-contributors one two :include-anon? (option? options :anon))
                           (take-and-format (:results options)))
-   :show-deploy-keys (-> (show-deploy-keys name) format-result)
-   :show-languages (-> (show-languages name desc) format-result)
-   :show-network (-> (show-network name desc) (take-and-format (:results options)))
+   :show-deploy-keys (-> (show-deploy-keys one) format-result)
+   :show-languages (-> (show-languages one two) format-result)
+   :show-network (-> (show-network one two) (take-and-format (:results options)))
    :show-pushable (-> (show-pushable) (take-and-format (:results options)))
-   :show-repo-info  (-> (show-repo-info name desc) format-result)
-   :show-repos (-> (show-repos name) (take-and-format (:results options)))
-   :show-tags (-> (show-tags name desc) format-result)
-   :else (-> (create-repo name
-                          :description desc
-                          :homepage home
-                          :public (or (= pub "true") (nil? pub)))
+   :show-repo-info  (-> (show-repo-info one two) format-result)
+   :show-repos (-> (show-repos one) (take-and-format (:results options)))
+   :show-tags (-> (show-tags one two) format-result)
+   :else (-> (create-repo one
+                          :description two
+                          :homepage three
+                          :public (or (= four "true") (nil? four)))
              format-result)))
