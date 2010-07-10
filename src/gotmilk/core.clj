@@ -41,16 +41,18 @@
 
 (defn format-result [result]
   (str "\n"
-   (cond
-    (map? result) (apply
-                   str
-                   (interpose
-                    "\n"
-                    (for [[k v] result]
-                      (str (->> k str rest (apply str) (#(.replaceAll % "_" " "))) " -> " v))))
-    (string? result) result
-    (vector? result) (apply str (interpose ", " result)))
-   "\n"))
+       (cond
+        (map? result) (apply
+                       str
+                       (interpose
+                        "\n"
+                        (for [[k v] result]
+                          (str (->> k str rest (apply str) (#(.replaceAll % "_" " "))) " -> " v))))
+        (string? result) result
+        (nil? result) "wut"
+        (not (seq result)) "Nothing interested happened."
+        :else (apply str (interpose ", " result)))
+       "\n"))
 
 (defmulti execute (comp identity first vector))
 
@@ -62,7 +64,12 @@
 (defn take-and-format [x & [n]]
   (let [n (when n (Integer/parseInt n))
         x (if n (take n x) x)]
-    (apply str (map format-result x))))
+    (if (some map? x)
+      (apply str (map format-result x))
+      (format-result x))))
+
+(defn if-only [options key only results]
+  (if (option? options key) (map only results) results))
 
 (defn run []
   (with-auth *auth-map*
