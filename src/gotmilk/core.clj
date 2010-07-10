@@ -59,6 +59,11 @@
      (swap! commands assoc ~trigger ~help)
      (defmethod execute ~trigger [worthless# ~'options & ~args] ~@body)))
 
+(defn take-and-format [x & [n]]
+  (let [n (when n (Integer/parseInt n))
+        x (if n (take n x) x)]
+    (apply str (map format-result x))))
+
 (defn run []
   (with-auth *auth-map*
     (let [[action & args] *command-line-args*
