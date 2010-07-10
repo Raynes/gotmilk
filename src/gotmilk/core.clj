@@ -5,7 +5,7 @@
 (defn get-config [parameter]
   (apply str (butlast (sh "git" "config" "--global" (str "github." parameter)))))
 
-(def commands (atom {}))
+(def help-map (atom {}))
 
 (def *auth-map* {:user (get-config "user")
                  :pass (get-config "password")})
@@ -70,8 +70,13 @@
 
 (defmacro defcommand [trigger help args & body]
   `(do
-     (swap! commands assoc ~trigger ~help)
+     (swap! help-map assoc ~trigger ~help)
      (defmethod execute ~trigger [worthless# ~'options & ~args] ~@body)))
+
+(defcommand "help"
+  "Get help!"
+  [cmd]
+  (if cmd (println (@help-map cmd) (println (apply str (interpose "\n" (vals @help-map)))))))
 
 (defn take-and-format [x & [n]]
   (let [n (when n (Integer/parseInt n))

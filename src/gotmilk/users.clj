@@ -12,14 +12,15 @@ to unfollow a user (--unfollow): Same as for following.
 
 to get a list of a user's followers (--followers): Same as for following.
 
-to get a list of repos a user is watching (--watching): Supply the name of the user. Optionally supply
---results=<number> to limit the number of results printed, and --names to only get the names of the repos.
+to get a list of repos a user is watching (--watching): Supply the name of the user.
+Optionally supply --results=<number> to limit the number of results printed, and --names
+to only get the names of the repos.
 
-to search for users (--search): Supply the search terms. Optionally supply --results=<number> to limit the
-number of results printed, and --names to only get the names of users.
+to search for users (--search): Supply the search terms. Optionally supply --results=<number>
+to limit the number of results printed, and --names to only get the names of users.
 
-to set information about yourself (--set): Supply one of name, email, blog, company, location, and the
-value you want to set it to."
+to set information about yourself (--set): Supply one of name, email, blog, company, location,
+and the value you want to set it to."
   [one two three four]
   (cond-options
    options
