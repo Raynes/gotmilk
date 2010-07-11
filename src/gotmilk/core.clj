@@ -108,7 +108,7 @@
       (.setExecutable true))
     (println "Installation complete. Please make sure ~/bin is on your PATH.")))
 
-(defn moar "\nI need more information than that.\n")
+(def moar "\nI need more information than that.\n")
 
 (defn run []
   (with-auth *auth-map*
