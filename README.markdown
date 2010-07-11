@@ -107,6 +107,9 @@ Either clone the repo, or fetch gotmilk-standalone.jar from the Downloads sectio
 
 and it will install all by it's lonesome. After that, make sure ~/bin is on your PATH, and then use `gotmilk help`.
 
+If you cloned the repo, you'll need to do this first:
+    lein deps && lein uberjar && java -jar gotmilk-standalone.jar --self-install
+
 ## TODO
 
 Lots of stuff. Here are some important things.
