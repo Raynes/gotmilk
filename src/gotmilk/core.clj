@@ -1,6 +1,7 @@
 (ns gotmilk.core
   (:use [clojure.contrib.shell :only [sh]]
-        [clj-github.core :only [with-auth]]))
+        [clj-github.core :only [with-auth]]
+        [clojure.java.io :only [file copy]]))
 
 (defn get-config [parameter]
   (apply str (butlast (sh "git" "config" "--global" (str "github." parameter)))))
@@ -76,7 +77,9 @@
 (defcommand "help"
   "Get help!"
   [cmd]
-  (if cmd (println (@help-map cmd) (println (apply str (interpose "\n" (vals @help-map)))))))
+  (if cmd
+    (println (@help-map cmd))
+    (println "\nCommands are user and repo. Do gotmilk <command> for more.")))
 
 (defn take-and-format [x & [n]]
   (let [n (when n (Integer/parseInt n))
@@ -87,6 +90,23 @@
 
 (defn if-only [options key only results]
   (if (option? options key) (map only results) results))
+
+(defn self-install []
+  (println "Installing gotmilk.\n")
+  (let [cwd (System/getProperty "user.dir")
+        home (System/getProperty "user.home")
+        bin (file home "bin")
+        dotgotmilk (file home ".gotmilk")]
+    (println "Creating ~/.gotmilk...\n")
+    (when-not (.exists dotgotmilk) (.mkdir dotgotmilk))
+    (println "Copying gotmilk-standalone.jar to ~/.gotmilk...\n")
+    (copy (file cwd "gotmilk-standalone.jar") (file dotgotmilk "gotmilk-standalone.jar"))
+    (println "Creating a start up script in ~/bin")
+    (when-not (.exists bin) (.mkdir bin))
+    (doto (file bin "gotmilk")
+      (spit "java -jar ~/.gotmilk/gotmilk-standalone.jar $@")
+      (.setExecutable true))
+    (println "Installation complete. Please make sure ~/bin is on your PATH.")))
 
 (defn run []
   (with-auth *auth-map*
