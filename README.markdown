@@ -109,7 +109,12 @@ and it will install all by it's lonesome. After that, make sure ~/bin is on your
 
 ## TODO
 
-Lots of stuff. It's nowhere near done. I'll add specific stuff later.
+Lots of stuff. Here are some important things.
+
+- Wrap clj-github's issue API.
+- Fix edge cases and do as much valid data checking as possible.
+- Add cool stuff that nobody else has.
+- Purchase a large 2 topping pizza from Pizza Hut.
 
 ## License
 
