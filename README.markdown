@@ -10,7 +10,7 @@ gotmilk works by using a small set of command with lots of options for each to a
 
 example: `gotmilk repo --fork nixeagle nisp`
 
-for creation (default): The first argument is required, and it should be the name of the repo. 
+for creation (create): The first argument is required, and it should be the name of the repo. 
 Optional following  keys are as follows, in order: description, homepage, and whether or not the repo 
 is public which should be true or false.
 
@@ -61,7 +61,7 @@ optionally supply --results=<number> to limit the number of results.
 for getting a list of repos you can push to (--show-pushable): Optionally supply --results=<number>
 to limit the number of results.
 
-for showing detailed information about a repo (--show-repo-info): Same as for --show-collaborators.
+for showing detailed information about a repo (default): Same as for --show-collaborators.
 
 for showing all the repos a user has (--show-repos): Supply the username. Optionally supply
 --results=<number> to limit the number of results.

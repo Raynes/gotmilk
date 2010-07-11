@@ -56,7 +56,7 @@ optionally supply --results=<number> to limit the number of results.
 for getting a list of repos you can push to (--show-pushable): Optionally supply --results=<number>
 to limit the number of results.
 
-for showing detailed information about a repo (--show-repo-info): Same as for --show-collaborators.
+for showing detailed information about a repo (default): Same as for --show-collaborators.
 
 for showing all the repos a user has (--show-repos): Supply the username. Optionally supply
 --results=<number> to limit the number of results.
@@ -87,13 +87,13 @@ Will default to --create"
    :show-languages (-> (show-languages one two) format-result)
    :show-network (-> (map generate-clone-urls (show-network one two)) (take-and-format (:results options)))
    :show-pushable (-> (map generate-clone-urls (show-pushable)) (take-and-format (:results options)))
-   :show-repo-info  (-> (show-repo-info one two) generate-clone-urls format-result)
    :show-repos (-> (map generate-clone-urls (show-repos one)) (take-and-format (:results options)))
    :show-tags (-> (show-tags one two) format-result)
-   :else (if one
-           (-> (create-repo one
-                            :description two
-                            :homepage three
-                            :public (or (= four "true") (nil? four)))
-               generate-clone-urls format-result)
-           moar)))
+   :create (if one
+             (-> (create-repo one
+                              :description two
+                              :homepage three
+                              :public (or (= four "true") (nil? four)))
+                 generate-clone-urls format-result)
+             moar)
+   :else (-> (show-repo-info one two) generate-clone-urls format-result)))

@@ -4,7 +4,7 @@
         [clojure.contrib.string :only [join]]))
 
 (defcommand "user"
-  "for getting info about a user (--show-info): Supply a username.
+  "for getting info about a user (default): Supply a username.
 
 to follow a user (--follow): Supply the user you want to follow.
 
