@@ -78,8 +78,8 @@
   "Get help!"
   [cmd]
   (if cmd
-    (println (@help-map cmd))
-    (println "\nCommands are user and repo. Do gotmilk <command> for more.")))
+    (@help-map cmd)
+    "\nCommands are user and repo. Do gotmilk <command> for more."))
 
 (defn take-and-format [x & [n]]
   (let [n (when n (Integer/parseInt n))
@@ -107,6 +107,8 @@
       (spit "java -jar ~/.gotmilk/gotmilk-standalone.jar $@")
       (.setExecutable true))
     (println "Installation complete. Please make sure ~/bin is on your PATH.")))
+
+(defn moar "\nI need more information than that.\n")
 
 (defn run []
   (with-auth *auth-map*

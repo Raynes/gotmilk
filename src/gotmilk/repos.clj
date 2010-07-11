@@ -90,8 +90,10 @@ Will default to --create"
    :show-repo-info  (-> (show-repo-info one two) generate-clone-urls format-result)
    :show-repos (-> (map generate-clone-urls (show-repos one)) (take-and-format (:results options)))
    :show-tags (-> (show-tags one two) format-result)
-   :else (-> (create-repo one
-                          :description two
-                          :homepage three
-                          :public (or (= four "true") (nil? four)))
-             generate-clone-urls format-result)))
+   :else (if one
+           (-> (create-repo one
+                            :description two
+                            :homepage three
+                            :public (or (= four "true") (nil? four)))
+               generate-clone-urls format-result)
+           moar)))
