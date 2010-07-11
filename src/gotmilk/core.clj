@@ -3,6 +3,8 @@
         [clj-github.core :only [with-auth]]
         [clojure.java.io :only [file copy]]))
 
+(def *version* "0.2.0-SNAPSHOT")
+
 (defn get-config [parameter]
   (apply str (butlast (sh "git" "config" "--global" (str "github." parameter)))))
 
