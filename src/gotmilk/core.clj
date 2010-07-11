@@ -1,7 +1,8 @@
 (ns gotmilk.core
   (:use [clojure.contrib.shell :only [sh]]
         [clj-github.core :only [with-auth]]
-        [clojure.java.io :only [file copy]]))
+        [clojure.java.io :only [file copy]])
+  (:require [clojure.string :as s]))
 
 (def *version* "0.2.0-SNAPSHOT")
 
@@ -80,8 +81,8 @@
   "Get help!"
   [cmd]
   (if cmd
-    (@help-map cmd)
-    "\nCommands are user and repo. Do gotmilk <command> for more."))
+    (str "\n" (@help-map cmd) "\n")
+    "\nCommands are user and repo. Do gotmilk <command> for more.\n"))
 
 (defn take-and-format [x & [n]]
   (let [n (when n (Integer/parseInt n))
@@ -98,17 +99,27 @@
   (let [cwd (System/getProperty "user.dir")
         home (System/getProperty "user.home")
         bin (file home "bin")
-        dotgotmilk (file home ".gotmilk")]
+        dotgotmilk (file home ".gotmilk")
+        current-jar (file (first
+                           (filter
+                            #(re-find (re-pattern (str "gotmilk(\\.|-"
+                                                       *version*
+                                                       "-standalone\\.|-standalone\\.)(jar|zip)")) %)
+                            (s/split (System/getProperty "java.class.path")
+                                     (re-pattern (System/getProperty "path.separator"))))))]
     (println "Creating ~/.gotmilk...\n")
     (when-not (.exists dotgotmilk) (.mkdir dotgotmilk))
-    (println "Copying gotmilk-standalone.jar to ~/.gotmilk...\n")
-    (copy (file cwd "gotmilk-standalone.jar") (file dotgotmilk "gotmilk-standalone.jar"))
+    (println (str "Copying " current-jar " to ~/.gotmilk...\n"))
+    (copy (file cwd current-jar) (file dotgotmilk current-jar))
     (println "Creating a start up script in ~/bin")
     (when-not (.exists bin) (.mkdir bin))
     (doto (file bin "gotmilk")
-      (spit "java -jar ~/.gotmilk/gotmilk-standalone.jar $@")
+      (spit (str "java -jar ~/.gotmilk/" current-jar " $@"))
       (.setExecutable true))
     (println "Installation complete. Please make sure ~/bin is on your PATH.")))
+
+;(defmacro if-need-moar [& args]
+;  (if ()))
 
 (def moar "\nI need more information than that.\n")
 
