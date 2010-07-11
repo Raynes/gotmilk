@@ -110,6 +110,8 @@ and it will install all by it's lonesome. After that, make sure ~/bin is on your
 If you cloned the repo, you'll need to do this first:
     lein deps && lein uberjar && java -jar gotmilk-standalone.jar --self-install
 
+If you're using a newer version of Leiningen, the jar might actually be gotmilk-VERSION-standalone.jar. 
+
 ## TODO
 
 Lots of stuff. Here are some important things.
