@@ -77,10 +77,13 @@
      (swap! help-map assoc ~trigger ~help)
      (defmethod execute ~trigger [worthless# ~'options & ~args] ~@body)))
 
+(defmethod execute :default
+  [& _] "\nInvalid command. Use the 'help' command if you don't know what to do.\n")
+
 (defcommand "help"
   "Get help!"
   [cmd]
-  (if cmd
+  (if (or cmd (option? options :help))
     (str "\n" (@help-map cmd) "\n")
     "\nCommands are user and repo. Do gotmilk <command> for more.\n"))
 
