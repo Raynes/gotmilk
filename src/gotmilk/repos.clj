@@ -89,11 +89,10 @@ Will default to --create"
    :show-pushable (-> (map generate-clone-urls (show-pushable)) (take-and-format (:results options)))
    :show-repos (-> (map generate-clone-urls (show-repos one)) (take-and-format (:results options)))
    :show-tags (-> (show-tags one two) format-result)
-   :create (if one
+   :create (if-need-moar [one]
              (-> (create-repo one
                               :description two
                               :homepage three
                               :public (or (= four "true") (nil? four)))
-                 generate-clone-urls format-result)
-             moar)
+                 generate-clone-urls format-result))
    :else (-> (show-repo-info one two) generate-clone-urls format-result)))

@@ -121,8 +121,8 @@
       (.setExecutable true))
     (println "Installation complete. Please make sure ~/bin is on your PATH.")))
 
-;(defmacro if-need-moar [& args]
-;  (if ()))
+(defmacro if-need-moar [args & then]
+  `(if (seq (remove identity ~args)) moar ~@then))
 
 (def moar "\nI need more information than that.\n")
 
