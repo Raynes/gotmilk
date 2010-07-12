@@ -66,33 +66,30 @@ repo's name.
 
 Will default to --create"
   [one two three four]
-  (cond-options
-   options
-   :delete (-> one delete-repo format-result)
-   :fork (-> (fork-repo one two) generate-clone-urls format-result)
-   :add-collaborator (-> (add-collaborator two one) format-result)
-   :remove-collaborator (-> (remove-collaborator two one) format-result)
-   :add-deploy (-> (add-deploy-key one two three) format-result)
-   :remove-deploy (-> (remove-deploy-key one two) format-result)
-   :search (-> (map generate-clone-urls (apply search-repos one (apply concat (dissoc options :search))))
-               (take-and-format (:results options)))
-   :set-info (-> (set-repo-info one two three four) generate-clone-urls format-result)
-   :set-visibility (-> (set-repo-visibility one two) generate-clone-urls format-result)
-   :watch (-> (watch-repo one two) generate-clone-urls format-result)
-   :unwatch (-> (unwatch-repo one two) generate-clone-urls format-result)
-   :show-collaborators (-> (show-collaborators one two) format-result)
-   :show-contributors (-> (show-contributors one two :include-anon? (option? options :anon))
-                          (take-and-format (:results options)))
-   :show-deploy-keys (-> (show-deploy-keys one) format-result)
-   :show-languages (-> (show-languages one two) format-result)
-   :show-network (-> (map generate-clone-urls (show-network one two)) (take-and-format (:results options)))
-   :show-pushable (-> (map generate-clone-urls (show-pushable)) (take-and-format (:results options)))
-   :show-repos (-> (map generate-clone-urls (show-repos one)) (take-and-format (:results options)))
-   :show-tags (-> (show-tags one two) format-result)
-   :create (if-need-moar [one]
-             (-> (create-repo one
-                              :description two
-                              :homepage three
-                              :public (or (= four "true") (nil? four)))
-                 generate-clone-urls format-result))
-   :else (-> (show-repo-info one two) generate-clone-urls format-result)))
+  :delete [] (-> one delete-repo format-result)
+  :fork [] (-> (fork-repo one two) generate-clone-urls format-result)
+  :add-collaborator [] (-> (add-collaborator two one) format-result)
+  :remove-collaborator [] (-> (remove-collaborator two one) format-result)
+  :add-deploy [] (-> (add-deploy-key one two three) format-result)
+  :remove-deploy [] (-> (remove-deploy-key one two) format-result)
+  :search [] (-> (map generate-clone-urls (apply search-repos one (apply concat (dissoc options :search))))
+                 (take-and-format (:results options)))
+  :set-info [] (-> (set-repo-info one two three four) generate-clone-urls format-result)
+  :set-visibility [] (-> (set-repo-visibility one two) generate-clone-urls format-result)
+  :watch [] (-> (watch-repo one two) generate-clone-urls format-result)
+  :unwatch [] (-> (unwatch-repo one two) generate-clone-urls format-result)
+  :show-collaborators [] (-> (show-collaborators one two) format-result)
+  :show-contributors [] (-> (show-contributors one two :include-anon? (option? options :anon))
+                            (take-and-format (:results options)))
+  :show-deploy-keys [] (-> (show-deploy-keys one) format-result)
+  :show-languages [] (-> (show-languages one two) format-result)
+  :show-network [] (-> (map generate-clone-urls (show-network one two)) (take-and-format (:results options)))
+  :show-pushable [] (-> (map generate-clone-urls (show-pushable)) (take-and-format (:results options)))
+  :show-repos [] (-> (map generate-clone-urls (show-repos one)) (take-and-format (:results options)))
+  :show-tags [] (-> (show-tags one two) format-result)
+  :create [one] (-> (create-repo one
+                                  :description two
+                                  :homepage three
+                                  :public (or (= four "true") (nil? four)))
+                     generate-clone-urls format-result)
+  :else [one two] (-> (show-repo-info one two) generate-clone-urls format-result))

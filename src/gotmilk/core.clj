@@ -35,14 +35,6 @@
   [option-map & options]
   (some identity (map (partial any-option? option-map) options)))
 
-(defmacro cond-options [options & clauses]
-  `(cond
-    ~@(apply concat
-             (for [[option happen] (partition 2 clauses)]
-               (if (= option :else)
-                 `(:else ~happen)
-                 `((option? ~options ~option) ~happen))))))
-
 (defn format-result [result]
   (str "\n"
        (cond
@@ -72,10 +64,20 @@
 
 (defmulti execute (comp identity first vector))
 
+(def moar "\nI need more information than that.\n")
+
 (defmacro defcommand [trigger help args & body]
   `(do
      (swap! help-map assoc ~trigger ~help)
-     (defmethod execute ~trigger [worthless# ~'options & ~args] ~@body)))
+     (defmethod execute ~trigger
+       [worthless# ~'options & ~args]
+       (cond
+        ~@(apply concat
+                 (for [[option moars happen] (partition 3 body)]
+                   `(~(if (= option :else) :else `(option? ~'options ~option))
+                     (if (seq ~moars)
+                       (if (some nil? ~moars) moar ~happen)
+                       ~happen))))))))
 
 (defmethod execute :default
   [& _] "\nInvalid command. Use the 'help' command if you don't know what to do.\n")
@@ -83,9 +85,9 @@
 (defcommand "help"
   "Get help!"
   [cmd]
-  (if (or cmd (option? options :help))
-    (str "\n" (@help-map cmd) "\n")
-    "\nCommands are user and repo. Do gotmilk <command> for more.\n"))
+  :else [] (if cmd
+             (str "\n" (@help-map cmd) "\n")
+             "\nCommands are user and repo. Do gotmilk help <command> for more.\n"))
 
 (defn take-and-format [x & [n]]
   (let [n (when n (Integer/parseInt n))
@@ -121,13 +123,10 @@
       (.setExecutable true))
     (println "Installation complete. Please make sure ~/bin is on your PATH.")))
 
-(defmacro if-need-moar [args & then]
-  `(if (seq (remove identity ~args)) moar ~@then))
-
-(def moar "\nI need more information than that.\n")
-
 (defn run []
   (with-auth *auth-map*
     (let [[action & args] *command-line-args*
           [options argies] (parse-options args)]
-      (println (apply execute action options argies)))))
+      (if (= action "--help")
+        (println "\nCommands are user and repo. Do gotmilk help <command> for more.\n")
+        (println (apply execute action options argies))))))
