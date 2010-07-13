@@ -128,5 +128,5 @@
     (let [[action & args] *command-line-args*
           [options argies] (parse-options args)]
       (if (= action "--help")
-        (println "\nCommands are user and repo. Do gotmilk help <command> for more.\n")
+        (println (apply execute "help" {} argies))
         (println (apply execute action options argies))))))
