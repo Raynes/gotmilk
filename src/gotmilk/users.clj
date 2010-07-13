@@ -22,10 +22,10 @@ to limit the number of results printed, and --names to only get the names of use
 to set information about yourself (--set): Supply one of name, email, blog, company, location,
 and the value you want to set it to."
   [one two three four]
-  :follow [] (-> one follow format-result)
-  :unfollow [] (-> one unfollow format-result)
-  :followers [] (-> one show-followers format-result)
-  :watching [] (-> (if-only options :names :name (show-watching one)) (take-and-format (:results options)))
-  :search [] (-> (if-only options :names :name (search-users one)) (take-and-format (:results options)))
-  :set [] (-> (user-set (:user *auth-map*) one two) format-result)
-  :else [] (-> one show-user-info format-result))
+  :follow [one] (-> one follow format-result)
+  :unfollow [one] (-> one unfollow format-result)
+  :followers [one] (-> one show-followers format-result)
+  :watching [one] (-> (if-only options :names :name (show-watching one)) (take-and-format (:results options)))
+  :search [one] (-> (if-only options :names :name (search-users one)) (take-and-format (:results options)))
+  :set [one two] (-> (user-set (:user *auth-map*) one two) format-result)
+  :else [one] (-> one show-user-info format-result))
