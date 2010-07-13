@@ -1,5 +1,5 @@
 (ns gotmilk.core
-  (:use [clojure.contrib.shell :only [sh]]
+  (:use [clojure.java.shell :only [sh]]
         [clj-github.core :only [with-auth]]
         [clojure.java.io :only [file copy]])
   (:require [clojure.string :as s]))
@@ -7,7 +7,7 @@
 (def *version* "0.2.0-SNAPSHOT")
 
 (defn get-config [parameter]
-  (apply str (butlast (sh "git" "config" "--global" (str "github." parameter)))))
+  (apply str (butlast (:out (sh "git" "config" "--global" (str "github." parameter))))))
 
 (def help-map (atom {}))
 
