@@ -55,7 +55,7 @@
 
 (defn generate-clone-urls [res-map]
   (if (map? res-map)
-    (let [owner (:owner res-map)
+    (let [owner (if-let [owner (:owner res-map)] owner (:username res-map))
           name (:name res-map)]
       (assoc res-map
         "clone url (read only)" (str "git://github.com/" owner "/" name ".git")
