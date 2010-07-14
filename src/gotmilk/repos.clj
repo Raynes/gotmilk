@@ -1,7 +1,8 @@
 (ns gotmilk.repos
   (:use gotmilk.core
         clj-github.repos
-        [clojure.contrib.string :only [join]]))
+        [clojure.contrib.string :only [join]]
+        [clojure.java.shell :only [sh]]))
 
 (defcommand "repo"
   "for creation (--create) : The first argument is required, and it
@@ -64,6 +65,9 @@ for showing all the repos a user has (--show-repos): Supply the username. Option
 for showing a repo's tags (--show-tags): Supply the name of the user who owns the repo and the
 repo's name.
 
+for cloning a repo (--clone): Supply the name of the user who owns the repo and the name of the
+repo. Will not show the status information normally shown by git.
+
 Will default to --create"
   [one two three four]
   :delete [one] (-> one delete-repo format-result)
@@ -88,8 +92,13 @@ Will default to --create"
   :show-repos [one] (-> (map generate-clone-urls (show-repos one)) (take-and-format (:results options)))
   :show-tags [one two] (-> (show-tags one two) format-result)
   :create [one] (-> (create-repo one
-                                  :description two
-                                  :homepage three
-                                  :public (or (= four "true") (nil? four)))
-                     generate-clone-urls format-result)
+                                 :description two
+                                 :homepage three
+                                 :public (or (= four "true") (nil? four)))
+                    generate-clone-urls format-result)
+  :clone [one two] (let [shres (sh "git" "clone"
+                                   (if (option? options :write)
+                                     (str "git@github.com:" one "/" two ".git")
+                                     (str "git://github.com/" one "/" two ".git")))]
+                     (if (seq (:err shres)) (str "\n" (:err shres)) (format-result "Success")))
   :else [one two] (-> (show-repo-info one two) generate-clone-urls format-result))
