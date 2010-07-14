@@ -123,10 +123,28 @@
       (.setExecutable true))
     (println "Installation complete. Please make sure ~/bin is on your PATH.")))
 
+(defn run-cycle [cmd-args]
+  (let [[action & args] cmd-args
+        [options argies] (parse-options args)]
+    (if (= "--help" action)
+      (println (apply execute "help" {} argies))
+      (println (apply execute action options argies)))))
+
+(defcommand "exit"
+  "Exits the application. For usage in the shell."
+  []
+  :else [] (do (println "\nBai!\n")
+               (System/exit 0)))
+
+(defn run-as-shell []
+  (println "Welcome to the gotmilk shell. Enter commands and their options like you normally would.")
+  (while true
+    (print "gotmilk> ")
+    (flush)
+    (run-cycle (s/split (read-line) #" "))))
+
 (defn run []
   (with-auth *auth-map*
-    (let [[action & args] *command-line-args*
-          [options argies] (parse-options args)]
-      (if (= action "--help")
-        (println (apply execute "help" {} argies))
-        (println (apply execute action options argies))))))
+    (if (= (first *command-line-args*) "--shell")
+      (run-as-shell)
+      (run-cycle *command-line-args*))))
