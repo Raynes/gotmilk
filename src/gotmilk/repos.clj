@@ -90,7 +90,8 @@ Will default to --create"
   :show-network [one two] (-> (map generate-clone-urls (show-network one two)) (take-and-format (:results options)))
   :show-pushable [] (-> (map generate-clone-urls (show-pushable)) (take-and-format (:results options)))
   :show-repos [one] (-> (map generate-clone-urls (show-repos one)) (take-and-format (:results options)))
-  :show-tags [one two] (-> (show-tags one two) format-result)
+  :show-tags [one two] (let [tags (show-tags one two)]
+                         (format-result (if (seq tags) tags "Repo doesn't have any tags.")))
   :create [one] (-> (create-repo one
                                  :description two
                                  :homepage three

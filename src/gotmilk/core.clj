@@ -4,7 +4,7 @@
         [clojure.java.io :only [file copy]])
   (:require [clojure.string :as s]))
 
-(def *version* "0.2.0-SNAPSHOT")
+(def *version* "0.2.0")
 
 (defn get-config [parameter]
   (apply str (butlast (:out (sh "git" "config" "--global" (str "github." parameter))))))

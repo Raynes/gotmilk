@@ -6,6 +6,8 @@ A little tool for working with Github via the command-line. Sometimes quicker th
 
 gotmilk works by using a small set of command with lots of options for each to accomplish different things. I'll list every option for each command here.
 
+NOTE: You can also run all of these commands in gotmilk's shell (REPL) mode. You can start gotmilk in this mode with `gotmilk --shell`, try it out!
+
 ### gotmilk repo
 
 example: `gotmilk repo --fork nixeagle nisp`
@@ -69,8 +71,10 @@ for showing all the repos a user has (--show-repos): Supply the username. Option
 for showing a repo's tags (--show-tags): Supply the name of the user who owns the repo and the
 repo's name.
 
-Will default to --create
+for cloning a repo (--clone): Supply the name of the user who owns the repo and the name of the
+repo. Will not show the status information normally shown by git.
 
+Will default to showing info about a repo.
 
 ### gotmilk user
 
