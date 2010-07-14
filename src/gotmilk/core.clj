@@ -141,7 +141,12 @@
   (while true
     (print "gotmilk> ")
     (flush)
-    (run-cycle (s/split (read-line) #" "))))
+    (run-cycle
+     (filter seq
+             (flatten
+              (map #(%1 %2)
+                   (cycle [#(s/split % #" ") identity])
+                   (s/split (read-line) #"(?<!\\)(?:'|\")")))))))
 
 (defn run []
   (with-auth *auth-map*
