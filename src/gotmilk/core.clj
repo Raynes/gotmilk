@@ -136,17 +136,26 @@
   :else [] (do (println "\nBai!\n")
                (System/exit 0)))
 
+;; This monster is not my doing. This is the creation of the great Michał Marczyk
+;; Many thanks go to him for helping me out with this.
+(defn split-args [s]
+  (loop [bs (mapcat #(s/split % #"(?<=\s)|(?=\s)") (s/split s #"(?<=(?:'|\"))|(?=(?:'|\"))"))
+         args []]
+    (if-let [b (first bs)]
+      (condp = b
+          "'" (recur (next (drop-while #(not= % "'") (next bs)))
+                     (conj args (apply str (take-while #(not= % "'") (next bs)))))
+          "\"" (recur (next (drop-while #(not= % "\"") (next bs)))
+                      (conj args (apply str (take-while #(not= % "\"") (next bs)))))
+          (recur (next bs) (conj args b)))
+      (remove empty? (map #(.trim %) args)))))
+
 (defn run-as-shell []
   (println "Welcome to the gotmilk shell. Enter commands and their options like you normally would.")
   (while true
     (print "gotmilk> ")
     (flush)
-    (run-cycle
-     (filter seq
-             (flatten
-              (map #(%1 %2)
-                   (cycle [#(s/split % #" ") identity])
-                   (s/split (read-line) #"(?<!\\)(?:'|\")")))))))
+    (-> (read-line) split-args run-cycle)))
 
 (defn run []
   (with-auth *auth-map*
