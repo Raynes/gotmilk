@@ -89,6 +89,11 @@
              (str "\n" (@help-map cmd) "\n")
              "\nCommands are user and repo. Do gotmilk help <command> for more.\n"))
 
+(defcommand "version"
+  "Check what version you're running."
+  []
+  :else [] (format-result *version*))
+
 (defn take-and-format [x & [n]]
   (let [n (when n (Integer/parseInt n))
         x (if n (take n x) x)]
