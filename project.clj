@@ -1,4 +1,4 @@
-(defproject gotmilk "0.2.1"
+(defproject gotmilk "0.2.2"
   :description "A little tool for working with Github via the command line."
   :dependencies [[org.clojure/clojure "1.2.0-beta1"]
                  [org.clojure/clojure-contrib "1.2.0-beta1"]
