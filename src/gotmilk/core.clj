@@ -137,18 +137,54 @@
                (System/exit 0)))
 
 ;; This monster is not my doing. This is the creation of the great Michał Marczyk
-;; Many thanks go to him for helping me out with this.
-(defn split-args [s]
-  (loop [bs (mapcat #(s/split % #"(?<=\s)|(?=\s)") (s/split s #"(?<=(?:'|\"))|(?=(?:'|\"))"))
-         args []]
-    (if-let [b (first bs)]
-      (condp = b
-          "'" (recur (next (drop-while #(not= % "'") (next bs)))
-                     (conj args (apply str (take-while #(not= % "'") (next bs)))))
-          "\"" (recur (next (drop-while #(not= % "\"") (next bs)))
-                      (conj args (apply str (take-while #(not= % "\"") (next bs)))))
-          (recur (next bs) (conj args b)))
-      (remove empty? (map #(.trim %) args)))))
+;; Many thanks go to him for helping me out with this, by writing it so that I didn't
+;; have to! :D
+(defn initial-state [input]
+  {:expecting nil
+   :blocks (mapcat #(s/split % #"(?<=\s)|(?=\s)")
+                   (s/split input #"(?<=(?:'|\"|\\))|(?=(?:'|\"|\\))"))
+   :arg-blocks []})
+
+(defn arg-parser-step [s]
+  (if-let [bs (seq (:blocks s))]
+    (if-let [d (:expecting s)]
+      (loop [bs bs]
+        (cond (= (first bs) d)
+              [nil (-> s
+                       (assoc-in [:expecting] nil)
+                       (update-in [:blocks] next))]
+              (= (first bs) "\\")
+              [nil (-> s
+                       (update-in [:blocks] nnext)
+                       (update-in [:arg-blocks]
+                                  #(conj (pop %)
+                                         (conj (peek %) (second bs)))))]
+              :else
+              [nil (-> s
+                       (update-in [:blocks] next)
+                       (update-in [:arg-blocks]
+                                  #(conj (pop %) (conj (peek %) (first bs)))))]))
+      (cond (#{"\"" "'"} (first bs))
+            [nil (-> s
+                     (assoc-in [:expecting] (first bs))
+                     (update-in [:blocks] next)
+                     (update-in [:arg-blocks] conj []))]
+            (s/blank? (first bs))
+            [nil (-> s (update-in [:blocks] next))]
+            :else
+            [nil (-> s
+                     (update-in [:blocks] next)
+                     (update-in [:arg-blocks] conj [(.trim (first bs))]))]))
+    [(->> (:arg-blocks s)
+          (map (partial apply str)))
+     nil]))
+
+(defn split-args [input]
+  (loop [s (initial-state input)]
+    (let [[result new-s] (arg-parser-step s)]
+      (if result result (recur new-s)))))
+;;; End Monstrosity.
+
 
 (defn run-as-shell []
   (println "Welcome to the gotmilk shell. Enter commands and their options like you normally would.")
