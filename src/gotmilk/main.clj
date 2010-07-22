@@ -7,5 +7,3 @@
 (defn -main [& args]
   (binding [*command-line-args* args]
     (if (some #(= "--self-install" %) args) (self-install) (run))))
-
-(run)
